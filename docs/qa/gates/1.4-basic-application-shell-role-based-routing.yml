@@ -1,0 +1,28 @@
+schema: 1
+story: "1.4"
+story_title: "Basic Application Shell & Role-Based Routing"
+gate: "CONCERNS"
+status_reason: "E2E tests for security-critical features (role-based navigation and unauthorized access) were deferred, impacting full validation of AC2 and AC3."
+reviewer: "Quinn (Test Architect)"
+updated: "2025-09-10T12:00:00Z"
+
+waiver: { active: true, reason: "E2E tests for security-critical features explicitly waived by Product Owner due to time constraints. Reliance is placed on existing unit tests for process confirmation. This item will be revisited after Epic 3.", approved_by: "Product Owner" }
+
+top_issues:
+  - id: "SEC-002"
+    severity: high
+    finding: "Deferred E2E tests for role-based access and unauthorized page access."
+    suggested_action: "Implement E2E tests to validate end-to-end security flows."
+    suggested_owner: "dev"
+
+nfr_validation:
+  security: { status: CONCERNS, notes: "E2E tests for security-critical features were deferred." }
+  performance: { status: PASS, notes: "" }
+  reliability: { status: PASS, notes: "" }
+  maintainability: { status: PASS, notes: "" }
+
+recommendations:
+  immediate:
+    - action: "Prioritize and implement deferred E2E tests for role-based access and unauthorized page access."
+      refs: ["docs/stories/1.4.story.md#testing"]
+  future: []

@@ -1,14 +1,24 @@
+// app.ts (formerly index.ts)
+
 import express from 'express';
 import cors from 'cors';
+import mongoose from 'mongoose';
+import connectDB from './config/db'; // Your database connection logic
+import authRoutes from './routes/auth.routes';
+
+// Connect to the database only in a non-test environment
+if (process.env.NODE_ENV !== 'test') {
+  connectDB();
+}
 
 const app = express();
-const port = process.env.PORT || 3000;
 
-// CORS configuration
-const allowedOrigins = [process.env.CORS_ORIGIN, 'http://localhost:5173'];
+// ... (CORS configuration and other middleware)
 
-const corsOptions = {
+app.use(express.json());
+app.use(cors({
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    const allowedOrigins = [process.env.CORS_ORIGIN, 'http://localhost:5173'];
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
@@ -16,17 +26,17 @@ const corsOptions = {
     }
   },
   optionsSuccessStatus: 200
-};
+}));
 
-app.use(cors(corsOptions));
-app.use(express.json());
+// Define Routes
+app.use('/api/v1/auth', authRoutes);
 
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
+  const dbStatus = mongoose.connection.readyState === 1 ? 'ok' : 'error';
+  res.status(200).json({ 
+    status: 'ok',
+    database: dbStatus
+  });
 });
 
-const server = app.listen(port, () => {
-  console.log(`API server listening on port ${port}`);
-});
-
-export { app, server };
+export default app;
