@@ -18,7 +18,7 @@ const app = express();
 app.use(express.json());
 app.use(cors({
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    const allowedOrigins = [process.env.CORS_ORIGIN, 'http://localhost:5173'];
+    const allowedOrigins = [process.env.CORS_ORIGIN, 'http://localhost:5173', 'https://investor-tracking-crm-frontend.vercel.app'];
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
