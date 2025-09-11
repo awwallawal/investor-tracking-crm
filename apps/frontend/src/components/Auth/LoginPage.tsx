@@ -16,7 +16,8 @@ const LoginPage: React.FC = () => {
     setError(null);
 
     try {
-      const response = await axios.post('/api/v1/auth/login', {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''; // Fallback for local development if not set
+      const response = await axios.post(`${API_BASE_URL}/api/v1/auth/login`, {
         email,
         password,
       });
