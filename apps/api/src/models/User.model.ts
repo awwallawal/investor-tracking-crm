@@ -20,6 +20,12 @@ const userSchema = new mongoose.Schema({
     required: true,
     enum: ['Staff', 'Portal Administrator', 'Director-General'],
   },
+  status: {
+    type: String,
+    required: true,
+    enum: ['Active', 'Invited', 'Revoked'],
+    default: 'Invited',
+  },
 }, { timestamps: true });
 
 // Hash password before saving

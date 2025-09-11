@@ -1,11 +1,12 @@
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-import React, { useState } from 'react';
-import axios, { isAxiosError } from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { getApiBaseUrl } from "@/utils/env";
 
 const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -16,22 +17,18 @@ const LoginPage: React.FC = () => {
     setError(null);
 
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''; // Fallback for local development if not set
-      const response = await axios.post(`${API_BASE_URL}/api/v1/auth/login`, {
-        email,
-        password,
-      });
+      const API_BASE_URL = getApiBaseUrl();
+      const res = await axios.post(`${API_BASE_URL}/auth/login`, { email, password });
 
-      if (response.data.token) {
-        localStorage.setItem('authToken', response.data.token);
-        navigate('/dashboard');
-      }
-    } catch (err: unknown) {
-      if (isAxiosError(err)) {
-        setError(err.response?.data?.message || 'An unexpected error occurred.');
+      if (res.data?.token) {
+        localStorage.setItem("authToken", res.data.token);
+        navigate("/dashboard");
       } else {
-        setError('An unexpected error occurred.');
+        setError("Invalid email or password."); // unified error message
       }
+    } catch (_err) {
+      // All errors show same user-friendly message
+      setError("Invalid email or password.");
     } finally {
       setLoading(false);
     }
@@ -39,253 +36,116 @@ const LoginPage: React.FC = () => {
 
   return (
     <div style={styles.container}>
-      <div style={styles.backgroundShape1}></div>
-      <div style={styles.backgroundShape2}></div>
-      
-      <div style={styles.cardWrapper}>
-        <div style={styles.card}>
-          <div style={styles.header}>
-            <div style={styles.iconContainer}>
-              <svg style={styles.icon} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                <path d="M12 14c-4 0-8 2-8 4v2h16v-2c0-2-4-4-8-4z" />
-              </svg>
-            </div>
-            <h2 style={styles.title}>Welcome back</h2>
-            <p style={styles.subtitle}>Sign in to your account</p>
-          </div>
-          
-          {error && <p style={styles.error}>{error}</p>}
-          
-          <form style={styles.form} onSubmit={handleSubmit}>
-            <div style={styles.formGroup}>
-              <label style={styles.label} htmlFor="email">Email</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                style={styles.input}
-                placeholder="you@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={loading}
-              />
-            </div>
-            <div style={styles.formGroup}>
-              <label style={styles.label} htmlFor="password">Password</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                style={styles.input}
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={loading}
-              />
-            </div>
-            <div style={styles.options}>
-              <div style={styles.rememberMe}>
-                <input id="remember" name="remember" type="checkbox" style={styles.checkbox} />
-                <label htmlFor="remember" style={styles.checkboxLabel}>Remember me</label>
-              </div>
-              <a href="#" style={styles.forgotPassword}>Forgot password?</a>
-            </div>
-            <button
-              type="submit"
-              style={styles.button}
+      <div style={styles.card}>
+        <h2 style={styles.title}>CRM Login</h2>
+        <p style={styles.subtitle}>Sign in to continue</p>
+
+        {error && <p style={styles.error}>{error}</p>}
+
+        <form onSubmit={handleSubmit} style={styles.form}>
+          <div style={styles.formGroup}>
+            <label htmlFor="email" style={styles.label}>Email</label>
+            <input
+              type="email"
+              id="email"
+              style={styles.input}
+              placeholder="you@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               disabled={loading}
-            >
-              {loading ? 'Signing in...' : 'Sign in'}
-            </button>
-          </form>
-          
-          <div style={styles.signupContainer}>
-            <span style={styles.signupText}>Don't have an account?</span>
-            <a href="#" style={styles.signupLink}>Sign up</a>
+              required
+            />
           </div>
-        </div>
+
+          <div style={styles.formGroup}>
+            <label htmlFor="password" style={styles.label}>Password</label>
+            <input
+              type="password"
+              id="password"
+              style={styles.input}
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
+              required
+            />
+          </div>
+
+          <button type="submit" style={styles.button} disabled={loading}>
+            {loading ? "Signing in..." : "Sign In"}
+          </button>
+        </form>
       </div>
     </div>
   );
 };
 
-// CSS-in-JS styles object
+// Inline styles
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
-    background: 'linear-gradient(to bottom right, #bfdbfe, #c4b5fd, #fecdd3)',
-    minHeight: '100vh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-    overflow: 'hidden',
-    fontFamily: 'sans-serif',
-    padding: '1rem',
-    width: '100vw',
-  },
-  backgroundShape1: {
-    position: 'absolute',
-    top: '-6rem',
-    left: '-6rem',
-    width: '24rem',
-    height: '24rem',
-    borderRadius: '9999px',
-    backgroundColor: '#60a5fa',
-    opacity: 0.3,
-    filter: 'blur(3rem)',
-    pointerEvents: 'none',
-  },
-  backgroundShape2: {
-    position: 'absolute',
-    top: '10rem',
-    right: '0',
-    width: '18rem',
-    height: '18rem',
-    borderRadius: '9999px',
-    backgroundColor: '#f87171',
-    opacity: 0.4,
-    filter: 'blur(2rem)',
-    pointerEvents: 'none',
-  },
-  cardWrapper: {
-    position: 'relative',
-    zIndex: 10,
-    width: '100%',
-    maxWidth: '28rem',
-    margin: 'auto',
+    minHeight: "100vh",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    background: "linear-gradient(to bottom right, #3b82f6, #9333ea)",
+    padding: "1rem",
+    width: "100vw",
   },
   card: {
-    backdropFilter: 'blur(16px)',
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
-    border: '1px solid rgba(255, 255, 255, 0.4)',
-    borderRadius: '1.5rem',
-    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    padding: '2rem',
-  },
-  header: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    marginBottom: '2rem',
-  },
-  iconContainer: {
-    width: '4rem',
-    height: '4rem',
-    borderRadius: '9999px',
-    background: 'linear-gradient(to bottom right, #60a5fa, #8b5cf6)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-    marginBottom: '1rem',
-  },
-  icon: {
-    width: '2rem',
-    height: '2rem',
-    color: '#fff',
+    width: "100%",
+    maxWidth: "400px",
+    background: "#fff",
+    borderRadius: "12px",
+    padding: "2rem",
+    boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
+    textAlign: "center",
   },
   title: {
-    fontSize: '1.5rem',
-    fontWeight: 'bold',
-    color: '#1e3a8a',
-    marginBottom: '0.25rem',
+    fontSize: "1.5rem",
+    fontWeight: "bold",
+    color: "#1e3a8a",
+    marginBottom: "0.5rem",
   },
   subtitle: {
-    color: '#60a5fa',
-    fontSize: '0.875rem',
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1.5rem',
-  },
-  formGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  label: {
-    display: 'block',
-    color: '#1d4ed8',
-    fontSize: '0.875rem',
-    fontWeight: '600',
-    marginBottom: '0.5rem',
-  },
-  input: {
-    width: 'inherit',
-    padding: '0.75rem 1rem',
-    borderRadius: '0.75rem',
-    border: '1px solid #bfdbfe',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    color: '#1e3a8a',
-    transition: 'all 0.2s',
-  },
-  options: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  rememberMe: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  checkbox: {
-    height: '1rem',
-    width: '1rem',
-    borderRadius: '0.25rem',
-    color: '#2563eb',
-    border: '1px solid #93c5fd',
-  },
-  checkboxLabel: {
-    marginLeft: '0.5rem',
-    display: 'block',
-    fontSize: '0.875rem',
-    color: '#2563eb',
-  },
-  forgotPassword: {
-    fontSize: '0.875rem',
-    color: '#3b82f6',
-    textDecoration: 'none',
-    transition: 'all 0.2s',
-  },
-  button: {
-    width: '100%',
-    padding: '0.75rem 1rem',
-    borderRadius: '0.75rem',
-    background: 'linear-gradient(to right, #3b82f6, #8b5cf6)',
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: '1.125rem',
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-    border: 'none',
-    cursor: 'pointer',
-    transition: 'all 0.2s',
-  },
-  signupContainer: {
-    marginTop: '2rem',
-    textAlign: 'center',
-  },
-  signupText: {
-    color: '#93c5fd',
-    fontSize: '0.875rem',
-  },
-  signupLink: {
-    color: '#2563eb',
-    fontSize: '0.875rem',
-    fontWeight: '600',
-    textDecoration: 'none',
-    marginLeft: '0.25rem',
-    transition: 'all 0.2s',
+    fontSize: "0.9rem",
+    color: "#6b7280",
+    marginBottom: "1.5rem",
   },
   error: {
-    color: 'red',
-    marginBottom: '1rem',
-    textAlign: 'center',
-    fontWeight: 'bold',
+    color: "red",
+    fontWeight: "600",
+    marginBottom: "1rem",
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "1.2rem",
+  },
+  formGroup: {
+    textAlign: "left",
+  },
+  label: {
+    display: "block",
+    fontSize: "0.85rem",
+    color: "#374151",
+    marginBottom: "0.25rem",
+  },
+  input: {
+    width: "100%",
+    padding: "0.75rem",
+    borderRadius: "8px",
+    border: "1px solid #d1d5db",
+    fontSize: "1rem",
+  },
+  button: {
+    padding: "0.75rem",
+    borderRadius: "8px",
+    background: "linear-gradient(to right, #3b82f6, #8b5cf6)",
+    color: "#fff",
+    fontSize: "1rem",
+    fontWeight: "bold",
+    border: "none",
+    cursor: "pointer",
   },
 };
 

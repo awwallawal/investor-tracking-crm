@@ -5,6 +5,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import connectDB from './config/db'; // Your database connection logic
 import authRoutes from './routes/auth.routes';
+import userRoutes from './routes/user.routes';
 
 // Connect to the database only in a non-test environment
 if (process.env.NODE_ENV !== 'test') {
@@ -30,6 +31,7 @@ app.use(cors({
 
 // Define Routes
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/users', userRoutes);
 
 app.get('/health', (req, res) => {
   const dbStatus = mongoose.connection.readyState === 1 ? 'ok' : 'error';

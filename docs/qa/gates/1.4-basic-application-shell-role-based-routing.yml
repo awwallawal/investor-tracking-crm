@@ -6,7 +6,7 @@ status_reason: "E2E tests for security-critical features (role-based navigation 
 reviewer: "Quinn (Test Architect)"
 updated: "2025-09-10T12:00:00Z"
 
-waiver: { active: true, reason: "E2E tests for security-critical features explicitly waived by Product Owner due to time constraints. Reliance is placed on existing unit tests for process confirmation. This item will be revisited after Epic 3.", approved_by: "Product Owner" }
+waiver: { active: true, reason: "E2E tests for security-critical features explicitly waived by Product Owner due to time constraints. Reliance is placed on existing unit tests for process confirmation. This item will be revisited at the end of Epic 4.", approved_by: "Product Owner" }
 
 top_issues:
   - id: "SEC-002"

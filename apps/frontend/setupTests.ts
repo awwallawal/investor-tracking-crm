@@ -1,9 +1,10 @@
 import '@testing-library/jest-dom';
 import { TextEncoder } from 'util';
 
-// Polyfill for TextEncoder, which is used by some libraries in a browser context
-// but might not be available in JSDOM environment by default.
-// This is needed for react-router-dom in Jest environment.
-if (typeof global.TextEncoder === 'undefined') {
-  global.TextEncoder = TextEncoder;
+// Polyfill TextEncoder for Jest / JSDOM
+if (typeof (global as any).TextEncoder === 'undefined') {
+  (global as any).TextEncoder = TextEncoder;
 }
+
+// Set a default for Jest environment
+process.env.VITE_API_BASE_URL = process.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1';
