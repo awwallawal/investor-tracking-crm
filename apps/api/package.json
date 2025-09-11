@@ -2,16 +2,13 @@
   "name": "api",
   "version": "1.0.0",
   "description": "Backend API for OYSIPA Investor Tracking System",
-  "main": "dist/index.js",
+  "main": "src/server.ts",
   "scripts": {
-    "start": "ts-node src/server.ts",
-    "dev": "nodemon --exec ts-node src/server.ts",
+    "start": "npx ts-node src/server.ts",           
+    "dev": "nodemon --exec ts-node src/server.ts", 
     "test": "jest --runInBand",
-    "seed": "ts-node src/scripts/seed.ts"
+    "seed": "npx ts-node src/scripts/seed.ts"      
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@types/jsonwebtoken": "^9.0.10",
     "bcryptjs": "^3.0.2",
