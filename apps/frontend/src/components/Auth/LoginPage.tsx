@@ -1,7 +1,7 @@
+// src/components/Auth/LoginPage.tsx
 import React, { useState } from "react";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
-
 import { getApiBaseUrl } from "@/utils/env";
 
 const LoginPage: React.FC = () => {
@@ -17,18 +17,21 @@ const LoginPage: React.FC = () => {
     setError(null);
 
     try {
-      const API_BASE_URL = getApiBaseUrl();
+      const API_BASE_URL = getApiBaseUrl(); // Returns base URL
       const res = await axios.post(`${API_BASE_URL}/auth/login`, { email, password });
 
       if (res.data?.token) {
         localStorage.setItem("authToken", res.data.token);
         navigate("/dashboard");
       } else {
-        setError("Invalid email or password."); // unified error message
+        setError("Invalid email or password.");
       }
-    } catch (_err) {
-      // All errors show same user-friendly message
-      setError("Invalid email or password.");
+    } catch (err: unknown) {
+      if (isAxiosError(err)) {
+        setError(err.response?.data?.message || "Invalid email or password.");
+      } else {
+        setError("Unexpected error, please try again.");
+      }
     } finally {
       setLoading(false);
     }
